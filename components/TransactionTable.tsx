@@ -154,8 +154,13 @@ export const TransactionTable: React.FC = () => {
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     className={clsx(
-                      "hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors group relative",
-                      selectedIds.has(tx.id) && "bg-primary-50/60 dark:bg-primary-900/20"
+                      "group relative transition-all duration-200",
+                      // Hover State: Background darken/lighten + Left Accent via box-shadow
+                      "hover:bg-slate-50 dark:hover:bg-slate-800 hover:shadow-[inset_3px_0_0_0_#6366f1] hover:z-10",
+                      // Selected State: Background + Left Accent
+                      selectedIds.has(tx.id) 
+                        ? "bg-primary-50/60 dark:bg-primary-900/20 shadow-[inset_3px_0_0_0_#6366f1]" 
+                        : "bg-transparent"
                     )}
                   >
                     <td className="p-4">

@@ -17,7 +17,7 @@ import { AuditPage } from './pages/AuditPage';
 import { ModelPage } from './pages/ModelPage';
 
 // Protected Route Component
-const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
+const ProtectedRoute = ({ children }: { children?: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
 
@@ -33,7 +33,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactElement }) => {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return children;
+  return <>{children}</>;
 };
 
 function App() {

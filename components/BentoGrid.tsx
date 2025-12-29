@@ -2,12 +2,14 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 
-export const BentoGrid = ({ 
+interface BentoGridProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export const BentoGrid: React.FC<BentoGridProps> = ({ 
   className, 
   children 
-}: { 
-  className?: string; 
-  children: React.ReactNode 
 }) => {
   return (
     <div className={clsx("grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4", className)}>
@@ -16,14 +18,16 @@ export const BentoGrid = ({
   );
 };
 
-export const BentoItem = ({ 
+interface BentoItemProps {
+  className?: string;
+  children?: React.ReactNode;
+  delay?: number;
+}
+
+export const BentoItem: React.FC<BentoItemProps> = ({ 
   className, 
   children, 
   delay = 0 
-}: { 
-  className?: string; 
-  children: React.ReactNode;
-  delay?: number;
 }) => {
   return (
     <motion.div
@@ -31,33 +35,32 @@ export const BentoItem = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.4 }}
       className={clsx(
-        "group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm hover:shadow-xl transition-shadow duration-300",
+        "group relative overflow-hidden rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-6 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1",
         className
       )}
     >
-      {/* Dynamic Gradient Background Layer */}
+      {/* Dynamic Animated Gradient Background */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-primary-500/5 via-purple-500/5 to-amber-500/5 dark:from-primary-500/10 dark:via-purple-500/10 dark:to-amber-500/10"
+        className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-fuchsia-500/5 to-amber-500/5 dark:from-indigo-500/10 dark:via-fuchsia-500/10 dark:to-amber-500/10"
         style={{ 
-          backgroundSize: "400% 400%",
-          opacity: 0
+          backgroundSize: "200% 200%",
         }}
+        initial={{ opacity: 0 }}
         whileHover={{ opacity: 1 }}
         animate={{
-          backgroundPosition: ["0% 0%", "100% 100%"],
+          backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
         }}
         transition={{
           backgroundPosition: {
-            duration: 8,
+            duration: 5,
             repeat: Infinity,
-            repeatType: "reverse",
             ease: "linear"
           },
           opacity: { duration: 0.3 }
         }}
       />
       
-      {/* Decorative Blob */}
+      {/* Corner Blob for extra depth */}
       <motion.div 
         className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary-500/10 blur-3xl pointer-events-none"
         animate={{

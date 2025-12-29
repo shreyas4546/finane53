@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, Brain, Zap, PieChart, Github, Twitter, Linkedin, Mail, CheckCircle } from 'lucide-react';
 import { Button } from './ui/Button';
@@ -50,6 +50,53 @@ const NewsletterForm = () => {
 
 export const Home: React.FC = () => {
   const { t } = useI18n();
+
+  // Typewriter Effect State
+  const fullText1 = t('hero.title.1');
+  const fullText2 = t('hero.title.2');
+  const [displayedText1, setDisplayedText1] = useState('');
+  const [displayedText2, setDisplayedText2] = useState('');
+  const [showCursor1, setShowCursor1] = useState(true);
+  const [showCursor2, setShowCursor2] = useState(false);
+
+  useEffect(() => {
+    // Reset state when text changes (e.g. language switch)
+    setDisplayedText1('');
+    setDisplayedText2('');
+    setShowCursor1(true);
+    setShowCursor2(false);
+
+    let t1Index = 0;
+    let t2Index = 0;
+    let timeoutId: any;
+
+    const typeLine2 = () => {
+      if (t2Index < fullText2.length) {
+        setDisplayedText2(fullText2.slice(0, t2Index + 1));
+        t2Index++;
+        timeoutId = setTimeout(typeLine2, 60);
+      } else {
+        // Animation complete
+      }
+    };
+
+    const typeLine1 = () => {
+      if (t1Index < fullText1.length) {
+        setDisplayedText1(fullText1.slice(0, t1Index + 1));
+        t1Index++;
+        timeoutId = setTimeout(typeLine1, 50);
+      } else {
+        setShowCursor1(false);
+        setShowCursor2(true);
+        timeoutId = setTimeout(typeLine2, 200);
+      }
+    };
+
+    // Start delay
+    timeoutId = setTimeout(typeLine1, 300);
+
+    return () => clearTimeout(timeoutId);
+  }, [fullText1, fullText2]);
 
   const footerContainer: Variants = {
     hidden: { opacity: 0 },
@@ -112,18 +159,44 @@ export const Home: React.FC = () => {
             {t('hero.badge')}
          </motion.div>
 
-        <div className="max-w-3xl mx-auto">
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 leading-[1.15]">
-                {t('hero.title.1')} <br className="hidden sm:block" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400 filter drop-shadow-sm">{t('hero.title.2')}</span>
+        <div className="max-w-4xl mx-auto min-h-[160px] sm:min-h-[120px]">
+            <h1 
+              className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 leading-[1.15]"
+              aria-label={`${fullText1} ${fullText2}`}
+            >
+                <span className="inline-block">
+                   {displayedText1}
+                   {showCursor1 && (
+                     <span className="inline-block w-[3px] h-[0.9em] bg-slate-900 dark:bg-white ml-1 align-bottom animate-pulse" />
+                   )}
+                </span>
+                
+                <br className="hidden sm:block" />
+                
+                <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400 filter drop-shadow-sm">
+                   {displayedText2}
+                   {showCursor2 && (
+                     <span className="inline-block w-[3px] h-[0.9em] bg-primary-500 ml-1 align-bottom animate-pulse" />
+                   )}
+                </span>
             </h1>
         </div>
         
-        <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 2.5, duration: 1 }}
+          className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed"
+        >
             {t('hero.subtitle')}
-        </p>
+        </motion.p>
         
-        <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 3, duration: 0.5 }}
+          className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
+        >
             <Link to="/login" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full gap-2 shadow-xl shadow-primary-500/20 dark:shadow-primary-900/20">
                     {t('hero.cta.dashboard')} <ArrowRight className="w-5 h-5" />
@@ -132,11 +205,11 @@ export const Home: React.FC = () => {
             <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-transparent border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">
                 {t('hero.cta.docs')}
             </Button>
-        </div>
+        </motion.div>
       </section>
 
       {/* Features Section */}
-      <section className="mt-24 px-6 w-full max-w-5xl mx-auto pb-24">
+      <section className="mt-12 px-6 w-full max-w-5xl mx-auto pb-24">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <BentoItem delay={0.1} className="flex flex-col items-start text-left h-full border-slate-200/60 dark:border-slate-800/60 hover:border-primary-200 dark:hover:border-primary-800/50 transition-colors">
                 <div className="w-12 h-12 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center text-primary-600 dark:text-primary-400 mb-6 shrink-0">
