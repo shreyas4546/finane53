@@ -1,0 +1,5 @@
+{
+  "name": "FinSight AI",
+  "description": "An AI-powered transaction analysis dashboard featuring explainable risk detection, categorization, and audit trails.",
+  "requestFramePermissions": []
+}
