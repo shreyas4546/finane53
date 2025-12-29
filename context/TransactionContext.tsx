@@ -7,6 +7,13 @@ import { useI18n } from './I18nContext';
 // Simple ID generator
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
+interface ModelSettings {
+  sensitivity: number; // 0-100
+  autoFlagThreshold: number; // 0-100
+  activeModel: 'FinBERT-v2' | 'Anomaly-G3' | 'Risk-X1';
+  realtimeAnalysis: boolean;
+}
+
 interface TransactionContextType {
   transactions: Transaction[];
   filteredTransactions: Transaction[];
@@ -25,6 +32,9 @@ interface TransactionContextType {
   toggleSelection: (id: string) => void;
   selectAll: (ids: string[]) => void;
   clearSelection: () => void;
+  // Model Settings
+  modelSettings: ModelSettings;
+  updateModelSettings: (settings: Partial<ModelSettings>) => void;
 }
 
 const TransactionContext = createContext<TransactionContextType | undefined>(undefined);
@@ -47,6 +57,14 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
   });
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   
+  // Model Settings State
+  const [modelSettings, setModelSettings] = useState<ModelSettings>({
+    sensitivity: 75,
+    autoFlagThreshold: 85,
+    activeModel: 'FinBERT-v2',
+    realtimeAnalysis: true
+  });
+
   const { exchangeRate } = useI18n();
 
   const [filters, setFilters] = useState<FilterState>({
@@ -57,6 +75,10 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
     maxAmount: '',
     dateRange: 'all',
   });
+
+  const updateModelSettings = (newSettings: Partial<ModelSettings>) => {
+    setModelSettings(prev => ({ ...prev, ...newSettings }));
+  };
 
   // Filter Logic
   const filteredTransactions = useMemo(() => {
@@ -222,7 +244,9 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({ c
       selectedIds,
       toggleSelection,
       selectAll,
-      clearSelection
+      clearSelection,
+      modelSettings,
+      updateModelSettings
     }}>
       {children}
     </TransactionContext.Provider>

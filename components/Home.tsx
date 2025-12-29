@@ -22,10 +22,10 @@ export const Home: React.FC = () => {
         <div className="flex items-center gap-4">
              <I18nSelector />
              <ThemeToggle />
-             <Link to="/dashboard">
+             <Link to="/app/overview">
                 <Button variant="ghost">{t('nav.login')}</Button>
              </Link>
-             <Link to="/dashboard">
+             <Link to="/app/overview">
                 <Button>{t('nav.demo')}</Button>
              </Link>
         </div>
@@ -49,7 +49,7 @@ export const Home: React.FC = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
-            <Link to="/dashboard" className="w-full sm:w-auto">
+            <Link to="/app/overview" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full gap-2 shadow-lg shadow-primary-500/20 dark:shadow-none">
                     {t('hero.cta.dashboard')} <ArrowRight className="w-5 h-5" />
                 </Button>
