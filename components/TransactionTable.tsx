@@ -134,7 +134,7 @@ export const TransactionTable: React.FC = () => {
                   </div>
                 </th>
                 <th 
-                  className="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group select-none"
+                  className="p-4 cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors group select-none hidden lg:table-cell"
                   onClick={() => handleSort('confidenceScore')}
                 >
                    <div className="flex items-center gap-1 group-hover:text-slate-700 dark:group-hover:text-slate-200">
@@ -171,7 +171,7 @@ export const TransactionTable: React.FC = () => {
                     <td className="p-4 text-sm text-slate-600 dark:text-slate-400 font-mono whitespace-nowrap">
                       {new Date(tx.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                     </td>
-                    <td className="p-4 max-w-[200px]">
+                    <td className="p-4 max-w-[140px] md:max-w-[200px]">
                       <div className="font-medium text-slate-900 dark:text-slate-100 truncate">{tx.merchant}</div>
                       <div className="text-xs text-slate-500 dark:text-slate-500 truncate">{tx.description}</div>
                     </td>
@@ -205,7 +205,7 @@ export const TransactionTable: React.FC = () => {
                     <td className="p-4">
                       {renderRiskBadge(tx.riskLevel)}
                     </td>
-                    <td className="p-4 w-32">
+                    <td className="p-4 w-32 hidden lg:table-cell">
                       <ConfidenceBar score={tx.confidenceScore} />
                     </td>
                     <td className="p-4 text-right">
@@ -217,8 +217,11 @@ export const TransactionTable: React.FC = () => {
                           <Sparkles className="w-3.5 h-3.5" />
                           Explain
                         </button>
-                        <button className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded hover:bg-slate-100 dark:hover:bg-slate-800 md:hidden">
-                            <MoreHorizontal className="w-5 h-5" />
+                        <button 
+                          onClick={() => setSelectedTxForExplain(tx)}
+                          className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded hover:bg-slate-100 dark:hover:bg-slate-800 md:hidden"
+                        >
+                            <Sparkles className="w-5 h-5 text-primary-500" />
                         </button>
                       </div>
                     </td>

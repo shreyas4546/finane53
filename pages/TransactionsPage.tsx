@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { TransactionTable } from '../components/TransactionTable';
 import { FilterBar } from '../components/FilterBar';
 import { BulkActionBar } from '../components/BulkActionBar';
@@ -6,10 +6,13 @@ import { useTransactions } from '../context/TransactionContext';
 import { useI18n } from '../context/I18nContext';
 import { Download, SlidersHorizontal } from 'lucide-react';
 import { Button } from '../components/ui/Button';
+import { motion, AnimatePresence } from 'framer-motion';
+import clsx from 'clsx';
 
 export const TransactionsPage: React.FC = () => {
   const { t } = useI18n();
   const { filteredTransactions, transactions } = useTransactions();
+  const [isFiltersOpen, setIsFiltersOpen] = useState(true);
 
   const handleExport = () => {
     // Mock export functionality
@@ -38,6 +41,14 @@ export const TransactionsPage: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center gap-3">
+          <Button 
+            variant="secondary" 
+            onClick={() => setIsFiltersOpen(!isFiltersOpen)}
+            className={clsx("gap-2 transition-colors", isFiltersOpen ? "bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700" : "text-slate-500")}
+          >
+            <SlidersHorizontal className="w-4 h-4" />
+            {t('filter.label')}
+          </Button>
           <Button variant="secondary" onClick={handleExport} className="gap-2">
             <Download className="w-4 h-4" />
             Export CSV
@@ -46,7 +57,19 @@ export const TransactionsPage: React.FC = () => {
       </div>
 
       <div className="space-y-4">
-        <FilterBar />
+        <AnimatePresence initial={false}>
+          {isFiltersOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ type: "spring", bounce: 0, duration: 0.4 }}
+              className="overflow-hidden"
+            >
+              <FilterBar />
+            </motion.div>
+          )}
+        </AnimatePresence>
         <TransactionTable />
       </div>
       

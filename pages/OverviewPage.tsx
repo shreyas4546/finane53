@@ -3,6 +3,7 @@ import { useTransactions } from '../context/TransactionContext';
 import { useI18n } from '../context/I18nContext';
 import { ArrowUpRight, ArrowDownRight, Activity, AlertOctagon, CheckCircle, PieChart as PieChartIcon, Lightbulb, TrendingUp } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { BentoGrid, BentoItem } from '../components/BentoGrid';
 
 // Helper for simple SVG charts
 const AreaChart = ({ data, color }: { data: number[], color: string }) => {
@@ -100,14 +101,11 @@ export const OverviewPage: React.FC = () => {
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <BentoGrid>
         {stats.map((stat, i) => (
-          <motion.div
+          <BentoItem
             key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.1 }}
-            className="bg-white dark:bg-slate-900 p-6 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md transition-shadow"
+            delay={i * 0.1}
           >
             <div className="flex items-center justify-between mb-4">
               <div className={`p-2 rounded-lg ${stat.bg}`}>
@@ -127,9 +125,9 @@ export const OverviewPage: React.FC = () => {
             </div>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white">{stat.value}</h3>
             <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">{stat.label}</p>
-          </motion.div>
+          </BentoItem>
         ))}
-      </div>
+      </BentoGrid>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         

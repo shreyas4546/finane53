@@ -18,7 +18,7 @@ export const ConfidenceBar: React.FC<ConfidenceBarProps> = ({ score }) => {
           className={clsx("h-full rounded-full", colorClass)}
           initial={{ width: 0 }}
           animate={{ width: `${score}%` }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          transition={{ type: "spring", stiffness: 45, damping: 12 }}
         />
       </div>
       <span className="text-xs font-mono text-slate-500 dark:text-slate-400 tabular-nums">{score}%</span>

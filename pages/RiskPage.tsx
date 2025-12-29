@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTransactions } from '../context/TransactionContext';
 import { useI18n } from '../context/I18nContext';
 import { 
   AlertOctagon, ShieldAlert, AlertTriangle, 
-  ArrowUpRight, CheckCircle, Search 
+  ArrowUpRight, CheckCircle, Search, Sparkles
 } from 'lucide-react';
 import { Badge } from '../components/ui/Badge';
 import { ConfidenceBar } from '../components/ConfidenceBar';
+import { ExplainModal } from '../components/ExplainModal';
+import { Transaction } from '../types';
 import { motion } from 'framer-motion';
 import clsx from 'clsx';
 import { Button } from '../components/ui/Button';
@@ -14,6 +16,7 @@ import { Button } from '../components/ui/Button';
 export const RiskPage: React.FC = () => {
   const { transactions, updateStatus } = useTransactions();
   const { formatCurrency } = useI18n();
+  const [selectedTx, setSelectedTx] = useState<Transaction | null>(null);
 
   // Filter for Medium and High risk
   const riskTransactions = transactions.filter(t => t.riskLevel === 'High' || t.riskLevel === 'Medium');
@@ -117,8 +120,9 @@ export const RiskPage: React.FC = () => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
+                onClick={() => setSelectedTx(tx)}
                 className={clsx(
-                  "group relative bg-white dark:bg-slate-900 rounded-xl border p-5 shadow-sm transition-all hover:shadow-md",
+                  "group relative bg-white dark:bg-slate-900 rounded-xl border p-5 shadow-sm transition-all hover:shadow-lg cursor-pointer",
                   tx.riskLevel === 'High' 
                     ? "border-l-4 border-l-rose-500 border-y-slate-200 border-r-slate-200 dark:border-y-slate-800 dark:border-r-slate-800" 
                     : "border-l-4 border-l-amber-500 border-y-slate-200 border-r-slate-200 dark:border-y-slate-800 dark:border-r-slate-800"
@@ -129,7 +133,7 @@ export const RiskPage: React.FC = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-3">
-                         <h4 className="text-lg font-bold text-slate-900 dark:text-white truncate">{tx.merchant}</h4>
+                         <h4 className="text-lg font-bold text-slate-900 dark:text-white truncate group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">{tx.merchant}</h4>
                          <span className="text-xs font-mono text-slate-500">{new Date(tx.date).toLocaleDateString()}</span>
                       </div>
                       <div className="md:hidden">
@@ -137,10 +141,16 @@ export const RiskPage: React.FC = () => {
                       </div>
                     </div>
                     
-                    <p className="text-sm text-slate-600 dark:text-slate-300 mb-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800">
-                      <span className="font-semibold text-slate-700 dark:text-slate-200">AI Analysis: </span>
-                      {tx.aiReasoning.primaryReason}
-                    </p>
+                    <div className="relative">
+                      <p className="text-sm text-slate-600 dark:text-slate-300 mb-3 bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-800 group-hover:border-primary-100 dark:group-hover:border-primary-900/30 transition-colors">
+                        <span className="font-semibold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-primary-500" />
+                          AI Analysis: 
+                        </span>
+                        {tx.aiReasoning.primaryReason}
+                        <span className="block mt-1 text-xs text-primary-600 dark:text-primary-400 font-medium">Click to view full reasoning &rarr;</span>
+                      </p>
+                    </div>
 
                     <div className="flex flex-wrap gap-2 mt-auto">
                       {tx.aiReasoning.riskFactors.map(factor => (
@@ -172,7 +182,10 @@ export const RiskPage: React.FC = () => {
                         size="sm" 
                         variant="secondary" 
                         className="flex-1 text-xs"
-                        onClick={() => updateStatus(tx.id, 'Reviewed')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateStatus(tx.id, 'Reviewed');
+                        }}
                        >
                          <CheckCircle className="w-3.5 h-3.5 mr-1.5 text-emerald-500" />
                          Safe
@@ -181,7 +194,10 @@ export const RiskPage: React.FC = () => {
                         size="sm" 
                         variant="secondary" 
                         className="flex-1 text-xs border-rose-200 hover:bg-rose-50 text-rose-700 dark:border-rose-900/30 dark:hover:bg-rose-900/20 dark:text-rose-400"
-                        onClick={() => updateStatus(tx.id, 'Flagged')}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          updateStatus(tx.id, 'Flagged');
+                        }}
                        >
                          <ShieldAlert className="w-3.5 h-3.5 mr-1.5" />
                          Escalate
@@ -194,6 +210,12 @@ export const RiskPage: React.FC = () => {
           </div>
         )}
       </div>
+
+      <ExplainModal 
+        isOpen={!!selectedTx} 
+        transaction={selectedTx} 
+        onClose={() => setSelectedTx(null)} 
+      />
     </div>
   );
 };

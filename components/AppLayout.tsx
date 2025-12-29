@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { ThemeToggle } from './ThemeToggle';
 import { I18nSelector } from './I18nSelector';
 import { useI18n } from '../context/I18nContext';
 import { useTransactions } from '../context/TransactionContext';
+import { useAuth } from '../context/AuthContext';
 import { 
   PieChart, Bell, LayoutGrid, List, AlertOctagon, 
   History, Settings, Menu, X, Search, ChevronRight,
@@ -15,8 +16,11 @@ import clsx from 'clsx';
 export const AppLayout: React.FC = () => {
   const { t } = useI18n();
   const { isProcessing } = useTransactions();
+  const { user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
 
   const navItems = [
     { path: '/app/overview', icon: LayoutGrid, label: 'Overview' },
@@ -29,6 +33,11 @@ export const AppLayout: React.FC = () => {
   const getPageTitle = () => {
     const current = navItems.find(item => item.path === location.pathname);
     return current ? current.label : 'Dashboard';
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
   };
 
   const Sidebar = () => (
@@ -89,13 +98,17 @@ export const AppLayout: React.FC = () => {
       <div className="p-4 border-t border-slate-100 dark:border-slate-800">
         <div className="bg-slate-50 dark:bg-slate-800/50 p-3 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center gap-3">
           <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-700 dark:text-indigo-300 font-bold border-2 border-white dark:border-slate-700 shadow-sm">
-            JD
+            {user?.name.charAt(0) || 'U'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">John Doe</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">Financial Controller</p>
+            <p className="text-sm font-semibold text-slate-900 dark:text-white truncate">{user?.name || 'User'}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{user?.role || 'Viewer'}</p>
           </div>
-          <button className="text-slate-400 hover:text-rose-500 transition-colors">
+          <button 
+            onClick={handleLogout}
+            className="text-slate-400 hover:text-rose-500 transition-colors p-1"
+            title="Sign Out"
+          >
             <LogOut className="w-4 h-4" />
           </button>
         </div>
@@ -121,10 +134,35 @@ export const AppLayout: React.FC = () => {
       </AnimatePresence>
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 h-screen overflow-hidden relative">
         
         {/* Top Header */}
         <header className="h-20 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-4 sm:px-6 lg:px-8 z-30 sticky top-0 w-full">
+          
+          {/* Mobile Search Overlay */}
+          <AnimatePresence>
+            {isMobileSearchOpen && (
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute inset-0 z-50 bg-white dark:bg-slate-900 px-4 flex items-center gap-3 md:hidden border-b border-slate-200 dark:border-slate-800"
+                >
+                    <Search className="w-5 h-5 text-slate-400 shrink-0" />
+                    <input 
+                        autoFocus
+                        type="text" 
+                        placeholder="Search transactions..." 
+                        className="flex-1 bg-transparent border-none outline-none text-sm text-slate-900 dark:text-white placeholder-slate-400 h-full"
+                        onBlur={() => setIsMobileSearchOpen(false)}
+                    />
+                    <button onClick={() => setIsMobileSearchOpen(false)} className="p-2 text-slate-500">
+                        <X className="w-5 h-5" />
+                    </button>
+                </motion.div>
+            )}
+          </AnimatePresence>
+
           <div className="flex items-center gap-4">
             <button 
               onClick={() => setIsSidebarOpen(true)}
@@ -134,7 +172,7 @@ export const AppLayout: React.FC = () => {
             </button>
             
             {/* Breadcrumbs */}
-            <div className="flex flex-col">
+            <div className={clsx("flex flex-col", isMobileSearchOpen ? "invisible" : "visible")}>
               <div className="hidden md:flex items-center gap-2 text-xs font-medium text-slate-500 dark:text-slate-400 mb-1">
                  <span>Application</span>
                  <ChevronRight className="w-3 h-3" />
@@ -145,6 +183,14 @@ export const AppLayout: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
+            {/* Mobile Search Trigger */}
+            <button 
+                onClick={() => setIsMobileSearchOpen(true)}
+                className="md:hidden p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"
+            >
+                <Search className="w-5 h-5" />
+            </button>
+
             <div className="relative hidden md:block group">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
               <input 
