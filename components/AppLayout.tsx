@@ -6,7 +6,7 @@ import { useI18n } from '../context/I18nContext';
 import { useTransactions } from '../context/TransactionContext';
 import { useAuth } from '../context/AuthContext';
 import { 
-  PieChart, Bell, LayoutGrid, List, AlertOctagon, 
+  Command, Bell, LayoutGrid, List, AlertOctagon, 
   History, Settings, Menu, X, Search, ChevronRight,
   LogOut, User as UserIcon
 } from 'lucide-react';
@@ -48,7 +48,7 @@ export const AppLayout: React.FC = () => {
       {/* Logo Area */}
       <div className="h-20 flex items-center gap-3 px-6 border-b border-slate-100 dark:border-slate-800">
         <div className="bg-primary-600 p-2 rounded-xl shadow-lg shadow-primary-500/20">
-          <PieChart className="w-6 h-6 text-white" />
+          <Command className="w-6 h-6 text-white" />
         </div>
         <div>
           <span className="text-xl font-bold tracking-tight text-slate-900 dark:text-white block leading-none">{t('app.name')}</span>

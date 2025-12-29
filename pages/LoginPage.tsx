@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useI18n } from '../context/I18nContext';
-import { PieChart, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
+import { Command, Lock, Mail, ArrowRight, ShieldCheck, AlertCircle } from 'lucide-react';
 import { Button } from '../components/ui/Button';
 import { motion, Variants } from 'framer-motion';
 
@@ -98,7 +98,7 @@ export const LoginPage: React.FC = () => {
         {/* Brand Header */}
         <div className="mb-8 flex flex-col items-center">
           <motion.div variants={logoVariants} className="bg-primary-600 p-2.5 rounded-xl shadow-lg shadow-primary-500/20 mb-4">
-            <PieChart className="w-8 h-8 text-white" />
+            <Command className="w-8 h-8 text-white" />
           </motion.div>
           <motion.h1 variants={itemVariants} className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{t('app.name')}</motion.h1>
           <motion.p variants={itemVariants} className="text-slate-500 dark:text-slate-400 text-sm mt-1">Enterprise Financial Intelligence</motion.p>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Brain, Zap, PieChart, Github, Twitter, Linkedin, Mail, CheckCircle } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Brain, Zap, Command, Github, Twitter, Linkedin, Mail, CheckCircle } from 'lucide-react';
 import { Button } from './ui/Button';
 import { ThemeToggle } from './ThemeToggle';
 import { I18nSelector } from './I18nSelector';
@@ -121,7 +121,7 @@ export const Home: React.FC = () => {
         <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
             <div className="flex items-center gap-2">
                 <div className="bg-primary-600 p-1.5 rounded-lg shadow-sm">
-                  <PieChart className="w-5 h-5 text-white" />
+                  <Command className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-xl font-bold tracking-tight">{t('app.name')}</span>
             </div>
@@ -260,7 +260,7 @@ export const Home: React.FC = () => {
             <motion.div variants={footerItem} className="space-y-4">
               <div className="flex items-center gap-2">
                 <div className="bg-primary-600 p-1 rounded-md">
-                  <PieChart className="w-4 h-4 text-white" />
+                  <Command className="w-4 h-4 text-white" />
                 </div>
                 <span className="text-lg font-bold tracking-tight text-slate-900 dark:text-white">{t('app.name')}</span>
               </div>
