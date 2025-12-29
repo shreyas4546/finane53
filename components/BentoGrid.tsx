@@ -41,18 +41,18 @@ export const BentoItem: React.FC<BentoItemProps> = ({
     >
       {/* Dynamic Animated Gradient Background */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-fuchsia-500/5 to-amber-500/5 dark:from-indigo-500/10 dark:via-fuchsia-500/10 dark:to-amber-500/10"
+        className="absolute inset-0 bg-gradient-to-br from-indigo-500/5 via-purple-500/5 to-pink-500/5 dark:from-indigo-500/20 dark:via-purple-500/20 dark:to-pink-500/20"
         style={{ 
-          backgroundSize: "200% 200%",
+          backgroundSize: "400% 400%",
         }}
-        initial={{ opacity: 0 }}
-        whileHover={{ opacity: 1 }}
-        animate={{
-          backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
+        initial={{ opacity: 0, backgroundPosition: "0% 50%" }}
+        whileHover={{ 
+          opacity: 1,
+          backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
         }}
         transition={{
           backgroundPosition: {
-            duration: 5,
+            duration: 3,
             repeat: Infinity,
             ease: "linear"
           },
@@ -60,18 +60,30 @@ export const BentoItem: React.FC<BentoItemProps> = ({
         }}
       />
       
-      {/* Corner Blob for extra depth */}
+      {/* Corner Blob for extra depth - Reacts to hover */}
       <motion.div 
         className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-primary-500/10 blur-3xl pointer-events-none"
         animate={{
-          scale: [1, 1.2, 1],
-          opacity: [0.3, 0.6, 0.3],
+          scale: [1, 1.1, 1],
+          opacity: [0.3, 0.5, 0.3],
+        }}
+        whileHover={{
+            scale: 1.4,
+            opacity: 0.6
         }}
         transition={{
           duration: 4,
           repeat: Infinity,
           ease: "easeInOut"
         }}
+      />
+
+       {/* Secondary Blob (Bottom Left) - Appears on hover */}
+      <motion.div 
+        className="absolute -bottom-24 -left-24 h-48 w-48 rounded-full bg-fuchsia-500/10 blur-3xl pointer-events-none"
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileHover={{ opacity: 0.6, scale: 1.2 }}
+        transition={{ duration: 0.5 }}
       />
 
       <div className="relative z-10 h-full">

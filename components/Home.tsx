@@ -6,7 +6,7 @@ import { ThemeToggle } from './ThemeToggle';
 import { I18nSelector } from './I18nSelector';
 import { useI18n } from '../context/I18nContext';
 import { BentoItem } from './BentoGrid';
-import { motion, Variants } from 'framer-motion';
+import { motion, Variants, useScroll, useMotionValueEvent } from 'framer-motion';
 
 const NewsletterForm = () => {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
@@ -50,6 +50,21 @@ const NewsletterForm = () => {
 
 export const Home: React.FC = () => {
   const { t } = useI18n();
+
+  // Scroll visibility logic
+  const { scrollY } = useScroll();
+  const [isNavHidden, setIsNavHidden] = useState(false);
+
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    const previous = scrollY.getPrevious() ?? 0;
+    // Hide when scrolling down (> 0 to avoid hiding at very top if bouncing)
+    // Show when scrolling up
+    if (latest > previous && latest > 50) {
+      setIsNavHidden(true);
+    } else {
+      setIsNavHidden(false);
+    }
+  });
 
   // Typewriter Effect State
   const fullText1 = t('hero.title.1');
@@ -117,7 +132,15 @@ export const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex flex-col font-sans text-slate-900 dark:text-slate-100 transition-colors duration-200 selection:bg-primary-500/30">
       {/* Navbar */}
-      <nav className="sticky top-0 z-50 w-full h-20 border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md">
+      <motion.nav 
+        variants={{
+            visible: { y: 0 },
+            hidden: { y: -100 }
+        }}
+        animate={isNavHidden ? "hidden" : "visible"}
+        transition={{ duration: 0.35, ease: "easeInOut" }}
+        className="fixed top-0 left-0 right-0 z-50 w-full h-20 border-b border-slate-200/50 dark:border-slate-800/50 bg-slate-50/80 dark:bg-slate-950/80 backdrop-blur-md"
+      >
         <div className="max-w-7xl mx-auto px-6 h-full flex items-center justify-between">
             <div className="flex items-center gap-2">
                 <div className="bg-primary-600 p-1.5 rounded-lg shadow-sm">
@@ -143,14 +166,14 @@ export const Home: React.FC = () => {
                  </Link>
             </div>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-20 px-6 w-full max-w-5xl mx-auto text-center relative z-10">
+      <section className="relative pt-32 pb-16 md:pt-48 md:pb-32 px-6 w-full max-w-7xl mx-auto flex flex-col items-center text-center z-10">
         <motion.div 
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-8 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm text-sm font-medium text-slate-600 dark:text-slate-300"
+            className="mb-6 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm text-sm font-medium text-slate-600 dark:text-slate-300"
          >
             <span className="flex h-2 w-2 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -159,9 +182,9 @@ export const Home: React.FC = () => {
             {t('hero.badge')}
          </motion.div>
 
-        <div className="max-w-4xl mx-auto min-h-[160px] sm:min-h-[120px]">
+        <div className="max-w-5xl mx-auto min-h-[120px] sm:min-h-[140px] mb-6">
             <h1 
-              className="text-4xl sm:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 leading-[1.15]"
+              className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1]"
               aria-label={`${fullText1} ${fullText2}`}
             >
                 <span className="inline-block">
@@ -171,7 +194,8 @@ export const Home: React.FC = () => {
                    )}
                 </span>
                 
-                <br className="hidden sm:block" />
+                <br className="hidden md:block" />
+                <span className="md:hidden"> </span>
                 
                 <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-indigo-600 dark:from-primary-400 dark:to-indigo-400 filter drop-shadow-sm">
                    {displayedText2}
@@ -186,7 +210,7 @@ export const Home: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 2.5, duration: 1 }}
-          className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed"
+          className="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed mb-10"
         >
             {t('hero.subtitle')}
         </motion.p>
@@ -195,22 +219,22 @@ export const Home: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 3, duration: 0.5 }}
-          className="mt-8 flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center"
         >
             <Link to="/login" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full gap-2 shadow-xl shadow-primary-500/20 dark:shadow-primary-900/20">
+                <Button size="lg" className="w-full sm:min-w-[160px] gap-2 shadow-xl shadow-primary-500/20 dark:shadow-primary-900/20">
                     {t('hero.cta.dashboard')} <ArrowRight className="w-5 h-5" />
                 </Button>
             </Link>
-            <Button variant="secondary" size="lg" className="w-full sm:w-auto bg-transparent border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <Button variant="secondary" size="lg" className="w-full sm:w-auto sm:min-w-[160px] bg-transparent border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800">
                 {t('hero.cta.docs')}
             </Button>
         </motion.div>
       </section>
 
       {/* Features Section */}
-      <section className="mt-12 px-6 w-full max-w-5xl mx-auto pb-24">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <section className="px-6 w-full max-w-7xl mx-auto pb-24">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
             <BentoItem delay={0.1} className="flex flex-col items-start text-left h-full border-slate-200/60 dark:border-slate-800/60 hover:border-primary-200 dark:hover:border-primary-800/50 transition-colors">
                 <div className="w-12 h-12 bg-primary-50 dark:bg-primary-900/30 rounded-xl flex items-center justify-center text-primary-600 dark:text-primary-400 mb-6 shrink-0">
                     <Brain className="w-6 h-6" />
